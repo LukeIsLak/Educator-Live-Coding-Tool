@@ -7,8 +7,10 @@
  * @returns a JSON string that represents the format of any message sent between the client and server
  */
 function createMessage(type, sock, data, options) {
+    //console.log(JSON.stringify(sock));
     return (JSON.stringify(
         {
+            "instance":"",
             "type":type,
             "socket":sock,
             "data":data,
