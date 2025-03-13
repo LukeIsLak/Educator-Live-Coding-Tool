@@ -2,31 +2,23 @@
   "name": "live-coding-tool",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",
-    "child_process": "^1.0.2",
-    "cra-template": "1.2.0",
     "crypto": "^1.0.1",
-    "express": "^4.21.2",
-    "fs": "^0.0.1-security",
+    "crypto-browserify": "^3.12.1",
     "monaco-editor-webpack-plugin": "^7.1.0",
-    "path": "^0.12.7",
-    "pg": "^8.13.1",
-    "process": "^0.11.10",
-    "querystring": "^0.2.1",
     "react": "^18.2.0",
+    "react-app-rewired": "^2.2.1",
     "react-dom": "^18.2.0",
-    "react-scripts": "^5.0.1",
+    "react-scripts": "5.0.1",
     "socket.io-client": "^4.8.1",
-    "url": "^0.11.4",
-    "webpack": "^5.97.1",
-    "ws": "^8.18.0",
-    "zlib": "^1.0.5"
+    "webpack": "^5.98.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -46,14 +38,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@babel/plugin-transform-private-property-in-object": "^7.25.9",
-    "@craco/craco": "^5.9.0",
-    "@types/react": "^19.0.8"
-  },
-  "browser": {
-    "child_process": false,
-    "express": false
   }
 }

@@ -6,7 +6,7 @@
  * @param {*} options additional information attachted to the message, if any
  * @returns a JSON string that represents the format of any message sent between the client and server
  */
-function createMessage(type, sock, data, options) {
+export default function createMessage(type, sock, data, options) {
     //console.log(JSON.stringify(sock));
     return (JSON.stringify(
         {
@@ -18,5 +18,3 @@ function createMessage(type, sock, data, options) {
         })
     );
 }
-
-module.exports = createMessage;

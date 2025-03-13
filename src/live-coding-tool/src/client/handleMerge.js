@@ -1,3 +1,12 @@
+
+/**
+ * Algorithm
+ * Serperate lines and tokenize each line
+ * Match "Similar" lines
+ * Have segmented group to determine clusters of similar lines
+ * With the new instance as a priority, "merge the cluster of similar line"q 
+ */
+
 function handleMerge(previousInstance, newInstance) {
     //let mergedLines = "";
 
@@ -15,12 +24,15 @@ function handleMerge(previousInstance, newInstance) {
 
     /*Determine some sort of custom ancestor*/
     const determineCustomAncestor = (l1, l2) => {
-        //let common = []
+        let common = []
 
         l2.forEach((line1, index) => {
-            l1.forEach(line2 => {
+            l1.forEach((line2, index2) => {
                 if (line1 === line2) {
-                    console.log("found match")
+                    common.push((index, index2));
+                }
+                else {
+
                 }
             })
         });
@@ -31,6 +43,7 @@ function handleMerge(previousInstance, newInstance) {
 }
 
 function removeWhiteSpace(input) {
+    let tokenizeLine = []
     let result = "";
     let inString = false;
     let stringCont = "";
@@ -52,6 +65,10 @@ function removeWhiteSpace(input) {
             }
             else if(!char.match(/\s/)) {
                 result += char;
+            }
+            else {
+                tokenizeLine.push(result);
+                result = '';
             }
         }
     }

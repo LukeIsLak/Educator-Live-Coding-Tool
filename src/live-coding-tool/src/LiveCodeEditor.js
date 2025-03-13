@@ -5,7 +5,7 @@ import Editor from '@monaco-editor/react';
 /*Custom Dependencies*/
 import createMessage from './createMessage.js'
 import * as client from './connectToServer.js'
-import handleMerge from './client/handleMerge.js'
+//import handleMerge from './client/handleMerge.js'
 
 let socket;
 let socketInstance = {
@@ -33,13 +33,13 @@ function LiveCodeEditor () {
      * @brief handles is the editor has mounted to the webpage
      * @param {*} editor the specific monaco editor instance
      */
-    function handleEditorDidMount(editor) {
+    async function handleEditorDidMount(editor) {
         editorRef.current = editor;
         socketInstance.editor = editor;
         socketInstance.previousInstance = editor.getValue();
         /*If the socket to the server has not been initialized, connect to and initialize it*/
         if (!socket) {
-            socket = client.determineClientServer();
+            socket = await client.determineClientServer();
             socketInstance.socket = socket;
             socketInstance.socket.onmessage = function(event) {
                 const message = JSON.parse(event.data);
@@ -74,7 +74,7 @@ function LiveCodeEditor () {
                     const scrollTop = editor.getScrollTop();
                     const scrollLeft = editor.getScrollLeft();
                     socketInstance.previousInstance = editor.getValue();
-                    handleMerge(socketInstance.previousInstance, message.data);
+                    //handleMerge(socketInstance.previousInstance, message.data);
                     editor.setValue(message.data);
                     editor.setPosition(position);
                     editor.setScrollTop(scrollTop);
@@ -85,7 +85,8 @@ function LiveCodeEditor () {
                     console.log(message.data)
                 }
                 if (message.type === "serverRequestingInstance") {
-                    socket.send(createMessage('clientSendingInstance', socketInstance.socket, socketInstance.editor.getValue(), (socketInstance.id, message.data)))
+                    console.log("sending instance");
+                    socket.send(createMessage('clientSendingInstance', socketInstance.socket, socketInstance.editor.getValue(), [socketInstance.id, message.data]))
                 }
                 if (message.type === "serverSendingInstance") {
                     console.log(message.options);
@@ -133,7 +134,7 @@ function LiveCodeEditor () {
     }
 
     function selectOptions() {
-        console.log(socket);
+        //console.log(socket);
         //console.log(createMessage('requestInstances', socketInstance.socket, "socketInstance", undefined));
         socket.send(createMessage('requestInstances', socketInstance.socket, socketInstance.id, undefined));
     }

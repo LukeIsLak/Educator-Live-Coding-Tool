@@ -8,6 +8,13 @@ module.exports = {
                     languages: ['javascript', 'typescript', 'html', 'css']
                 })
             ]
+        },
+        configure: {
+            resolve: {
+                fallback: {
+                    "crypto": require.resolve("crypto-browserify")
+                }
+            }
         }
     }
 };
