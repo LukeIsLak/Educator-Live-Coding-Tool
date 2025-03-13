@@ -1,10 +1,15 @@
 import WebSocket from 'ws';
 import createMessage from './createMessage.js';
 
+const defaultPort = 3000;
 let servers = {};
 let servernum = 1;
 let serverInstances = [];
 
+/**
+ * @brief generates a random UUID specific for this project
+ * @returns the generated UUID
+ */
 function generateUUID() {
     let startString = "xxxx-xxxx".replace(/[xy]/g, c => {
         let num = Math.random() * 36 | 0;
@@ -13,6 +18,11 @@ function generateUUID() {
     return startString;
 }
 
+/**
+ * @brief determines if a server instance is a real instance
+ * @param instancePath instance to check
+ * @returns a boolean value representing if a instance is in the serverInstances array
+ */
 export function validServerInstance(instancePath) {
     return serverInstances.includes(instancePath) 
 }
@@ -28,13 +38,14 @@ export function createPrimaryServer() {
     const socket = initializePrimaryServer(serverID);
     let cwc = "//Start coding here";
 
+    /*Create the server object*/
     servers[serverID] = {
         "id":serverID,
         "serverSocket":socket,
         "connectedSockets":{},
         "socketIDs":[],
         "cwc":cwc,
-        "servernum":3000+servernum
+        "servernum":defaultPort+servernum
     };
     servernum++;
     return serverID;
@@ -48,7 +59,7 @@ export function createPrimaryServer() {
 export function initializePrimaryServer(serverID) {
     console.log('Created Server');
     const wss = new WebSocket.Server({
-        port:3000+servernum,
+        port:defaultPort+servernum,
         path:'/' + serverID
     });
     let index = serverInstances.at(serverID);
@@ -61,11 +72,10 @@ export function initializePrimaryServer(serverID) {
         console.log("Client connected: " + socketID);
         ws.send(createMessage('initialize', undefined, servers[serverID].cwc, socketID));
         
+        /*When the socket recieves a message*/
         ws.on('message', function incoming(message, other) {
             console.log('Received: %s', message);
             message = JSON.parse(message);
-
-            /*Create a new server*/
 
             /*If a socket wishes to update the current working code */
             if (message.type === 'updateCWC' || message.type === 'updateCWC--force') {
@@ -125,9 +135,13 @@ function updateCurrentWorkingCode(type, message, wss, ws, serverID) {
     });
 }
 
+/**
+ * @brief creates a host server that will handle all initial server requests
+ * @returns the socket that represents it
+ */
 function createHostServer() {
     console.log('Created Host Server');
-    const wss = new WebSocket.Server({ port: 3000});
+    const wss = new WebSocket.Server({ port: defaultPort});
     servernum++;
 
     /*create a function to handle when another socket connects to the server */
@@ -144,9 +158,11 @@ function createHostServer() {
             if (message.type === 'createServer') {
                 ws.send(createMessage('connectedServerID', null, createPrimaryServer(), undefined));
             }
+            /*Check to see if a server exists or not*/
             if (message.type === 'checkServer') {
                 ws.send(createMessage('validServerInstance', null, validServerInstance(message.data), undefined));
             }
+            /*Client asking for port number of a specific instance*/
             if (message.type === 'getPortNumber') {
                 ws.send(createMessage('sendPortNumber', null, servers[message.data].servernum, undefined));
             }
@@ -161,7 +177,6 @@ function createHostServer() {
 
     return wss;
 }
-//createClientSideServer();
-//generateUUID();
+
 /*Initialization for node.js */
 createHostServer();

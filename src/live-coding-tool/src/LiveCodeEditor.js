@@ -7,6 +7,7 @@ import createMessage from './createMessage.js'
 import * as client from './connectToServer.js'
 //import handleMerge from './client/handleMerge.js'
 
+/*Global variables*/
 let socket;
 let socketInstance = {
     "id":null,
@@ -23,6 +24,7 @@ let socketInstance = {
  * @returns the React Hook that contains the Editor Instance
  */
 function LiveCodeEditor () {
+    /*Default values*/
     const startCode = "// Start Coding Here..."
     const startLanugage = "javascript"
     const [code, setCode] = React.useState(startCode);
@@ -39,6 +41,8 @@ function LiveCodeEditor () {
         socketInstance.previousInstance = editor.getValue();
         /*If the socket to the server has not been initialized, connect to and initialize it*/
         if (!socket) {
+
+            /*Wait to connect to the socket*/
             socket = await client.determineClientServer();
             socketInstance.socket = socket;
             socketInstance.socket.onmessage = function(event) {
@@ -54,6 +58,7 @@ function LiveCodeEditor () {
                     console.log('Instance: %s, connected to the server!', socketInstance.id);
                 }
 
+                /*If the editor has been updated*/
                 if (message.type === "updateCWC") {
                     console.log("Updating Editor")
                     socketInstance.status = "busy";
@@ -67,6 +72,7 @@ function LiveCodeEditor () {
                     editor.setScrollLeft(scrollLeft);
                     socketInstance.status = "ready";
                 }
+                /*If the editor has been forcefully updated*/
                 if (message.type === "updateCWC--force") {
                     console.log("Processing Merge");
                     socketInstance.status = "busy";
@@ -81,13 +87,17 @@ function LiveCodeEditor () {
                     editor.setScrollLeft(scrollLeft);
                     socketInstance.status = "ready";
                 }
+                /*If the editor has been sent instances*/
                 if (message.type === "sentInstances") {
                     console.log(message.data)
                 }
+                /*If the server is requesting for the current instance*/
                 if (message.type === "serverRequestingInstance") {
                     console.log("sending instance");
                     socket.send(createMessage('clientSendingInstance', socketInstance.socket, socketInstance.editor.getValue(), [socketInstance.id, message.data]))
                 }
+
+                /*If the server is sending the instance*/
                 if (message.type === "serverSendingInstance") {
                     console.log(message.options);
                     console.log(message.data);
@@ -105,41 +115,57 @@ function LiveCodeEditor () {
     function handleEditorChange (value) {
         setCode(value);
         console.log(socketInstance.status)
-        if (socketInstance.socket != null) {
-            console.log('Test');
-        }
+        /*Push the code if connected to a server and permited to*/
         if (socketInstance.socket && socketInstance.role === "teacher" && socketInstance.status === "ready" && socketInstance.update) {
             console.log("Sending Message");
             socket.send(createMessage('updateCWC', socketInstance.socket, value, undefined));
         }
     }
 
+    /**
+     * @brief handles changing the language of the editor
+     * @param event event to grab value from
+     */
     function handleLanguageChange (event) {
         setLanguage(event.target.value);
     }
 
+    /**
+     * @brief handles changin the role of the user
+     * @param event event to grab value from 
+     */
     function handleRoleChange (event) {
         socketInstance.role = event.target.value;
         console.log(socketInstance.role);
     }
+
+    /**
+     * @brief handles pushing code
+    */
     function handlePush (event) {
         if (socketInstance.role === "teacher") {
             console.log("Forcing Push");
             socket.send(createMessage('updateCWC--force', socketInstance.socket, socketInstance.editor.getValue(), undefined));
         }
     }
+    /**
+     * @brief handles updating the push settings 
+     */
     function handlePushSettings (event) {
         socketInstance.update = (event.target.value !== "no-push");
         console.log(socketInstance.update);
     }
 
+    /**
+     * @brief handles requesting instances
+     */
     function selectOptions() {
         //console.log(socket);
         //console.log(createMessage('requestInstances', socketInstance.socket, "socketInstance", undefined));
         socket.send(createMessage('requestInstances', socketInstance.socket, socketInstance.id, undefined));
     }
 
-    /*HTML React component*/
+    /*React Hook component*/
     return (
         <div style={{ padding: '20px' }}>
             <select

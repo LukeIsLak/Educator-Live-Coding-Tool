@@ -5,7 +5,7 @@ let ac = [];
 let moveAC = [];
 
 /*Accent colours referenced from App.css*/
-let grad1 = [166, 201, 172];
+let grad1 = [166-40, 201-40, 172-40];
 let grad2 = [242, 241, 235];
 
 /*Ensures darker colour is always on the bottom*/
@@ -56,6 +56,7 @@ export default function initialize_background() {
     updateBackground();
 }
 
+/*For each point, update it based on its velocity*/
 function updateElementPosition(element, index) {
     let speed = 0.1;
     let newX = element[0] + moveAC[index][0]*speed;
@@ -67,18 +68,25 @@ function updateElementPosition(element, index) {
     ac[index] = [newX, newY, ac[index][2]];
 }
 
+/**
+ * @brief updates the background effect
+ */
 async function updateBackground() {
+    /*Remove all previous triangles*/
     document.querySelectorAll(".triangle").forEach((element) => {
         element.remove();
     });
 
+    /*Update each position*/
     for (let i = 0; i < ac.length; i++) {
         updateElementPosition(ac[i], i);
     }
     const docFrag = document.createDocumentFragment();
 
+    /*Create triangles based on the points*/
     let triangles = orderCoordinatesToTriangles();
 
+    /*Add each child to the document*/
     triangles.forEach((element) => {
          let child = createTriangle(ac[element[0]], ac[element[1]], ac[element[2]], element[4]);
          if (child != null) docFrag.appendChild(child);
@@ -86,29 +94,42 @@ async function updateBackground() {
 
     document.getElementById("background-container").appendChild(docFrag);
 
-    await delay(20);
+    await delay(25);
     updateBackground();
     
 }
 
+/**
+ * @brief creates a list of triangles based on the coordinates
+ * @returns a list of list of coordinates that represent a triangle
+ */
 function orderCoordinatesToTriangles() {
     let triangles = [];
+
+    /*For each possible combination of 3 points*/
     for (let e1 = 0; e1 < ac.length; e1 ++) {
         for (let e2 = e1+1; e2 < ac.length; e2 ++) {
             for (let e3 = e2+1; e3 < ac.length; e3 ++) {
+
+                /*Sort the points counter clockwise*/
                 let coord = sortToCounterClockwise(e1, e2, e3, ac);
                 let anyPointsWithin = false;
 
+                /*Check if any other points are within the triangle*/
                 for (let e4 = 0; e4 < ac.length; e4 ++) {
+
+                    /*If the point is one of the points of the triangle, skip it*/
                     if (e1 === e4 || e2 === e4 || e3 === e4) {
                         continue;
                     }
+                    /*Calculate if a point is inside*/
                     if (calculateDeterminant3x3(coord, e4)) {
                         anyPointsWithin = true;
                         break;
                     }
                 }
 
+                /*If a triangle had a potential point inside, don't use it; not smallest triangle*/
                 if (!anyPointsWithin) {
                     triangles.push(coord);
                 }
@@ -119,6 +140,12 @@ function orderCoordinatesToTriangles() {
     return triangles;
 }
 
+/**
+ * @brief calculates the determinant of a 3x3 matrix given a new coordinate
+ * @param coord the 3x3 matrix
+ * @param e4 index of the new coordinate
+ * @returns whether or not the determinant is positive
+ */
 function calculateDeterminant3x3(coord, e4) {
     const ax = ac[(coord[0])][0];
     const ay = ac[coord[0]][1];
@@ -137,17 +164,41 @@ function calculateDeterminant3x3(coord, e4) {
     return (result > 0);
 }
 
-// returns (e1 - e2)^2 + (e3 - e4)^2
+/** 
+ * @brief determines the calculation for a difference in determinant
+ * @param e1 first element
+ * @param e2 second element
+ * @param e3 third element 
+ * @param e4 fourth element
+ * @returns (e1 - e2)^2 + (e3 - e4)^2
+ */
 function calcDifferentDet(e1, e2, e3, e4) {
     return Math.pow(e1 - e2, 2) + Math.pow(e3 - e4, 2);
 }
 
-// | e1, e2 |
-// | e3, e4 |
+/**
+ * @brief calculates the determinant of a 2x2 matrix
+ * @param e1 first element
+ * @param e2 second element
+ * @param e3 third element
+ * @param e4 fourth element
+ * @returns the determinant of a 2x2 matrix
+ *
+ * | e1, e2 |
+ * | e3, e4 |
+ */
 function calculateDeterminant2x2(e1, e2, e3, e4) {
     return ((e1 * e4) - (e2*e3));
 }
 
+/**
+ * @brief sorts the coordinates counter clockwise
+ * @param e1 index of element 1
+ * @param e2 index of element 2
+ * @param e3 index of element 3
+ * @param ac list of all coords
+ * @returns a soret list of coordinates
+ */
 function sortToCounterClockwise(e1, e2, e3, ac) {
     let coord = [];
     const centerX = (ac[e1][0] + ac[e2][0] + ac[e3][0])/3;
@@ -183,6 +234,15 @@ function sortToCounterClockwise(e1, e2, e3, ac) {
     return coord;
 }
 
+/**
+ * @brief gets the proper scale of a triangle border
+ * @param cX center X
+ * @param cY center Y
+ * @param pX position X
+ * @param pY position Y
+ * @param s scale to be set to 
+ * @returns the scaled vector
+ */
 const getScale = (cX, cY, pX, pY, s) => {
 
     let v = make_vector([pX, pY], [cX, cY]);
@@ -193,9 +253,9 @@ const getScale = (cX, cY, pX, pY, s) => {
 
 /**
  * @brief creates a triangle html element given 3 points and the center of the triangle
- * @param {vector} p1 point 1
- * @param {vector} p2 point 2
- * @param {vector} p3 point 3
+ * @param {2D Vector} p1 point 1
+ * @param {2D Vector} p2 point 2
+ * @param {2D Vector} p3 point 3
  * @param centerY center of the triangle
  * @returns triangle html element
  */
@@ -220,18 +280,34 @@ function createTriangle(p1, p2, p3, centerY) {
     return newTriangle;
 }
 
+/**
+ * @brief returns a colour value as a gradient between two colours
+ * @param i specific RGB values to use 
+ * @param cY the Y coordinate to use
+ * @returns 
+ */
 function colourFunction(i, cY) {
     return (grad1[i] + ((grad2[i] - grad1[i]) * (1 - (cY / 100))));
 }
 
-//make a vector given arrays
+
+/**
+ * @breif creates a vector given two points
+ * @param {Coord} e1 coordinate one
+ * @param {Coord} e2 coordinate two
+ * @returns the vector between the two points
+ */
 const make_vector = (e1, e2) => {
     const wa = e2[1] - e1[1];
     const wb = e2[0] - e1[0];
     return [wb, wa];
 };
 
-//Get current width of a vector
+/**
+ * @brief gets the magnitude of a vector
+ * @param {2D vector} v vector to get the magnitude of 
+ * @returns the magnitude of the vector
+ */
 const get_width = (v) => {
     const wa = Math.pow(v[0], 2);
     const wb = Math.pow(v[1], 2);
@@ -239,20 +315,32 @@ const get_width = (v) => {
 };
 
 
-//Get current angle of a vector with the line <1, 0>
+/**
+ * @brief gets the angle of a vector relative to the positive x axis
+ * @param {2D vector} v the vector to get the angle of 
+ * @returns the angle of the vector
+ */
 const get_angle = (v) => {
     let angle = Math.acos((v[0] / get_width(v)))*180/Math.PI;
     if (v[1] < 0) {angle = 360 - angle;}
     return angle;
 };
 
-//get unit vector
+/**
+ * @brief Gets a unit vector from a 2D vector
+ * @param {2D vector} v 2D array as a vector 
+ * @returns updated vector as a unit vector
+ */
 const unit_vector= (v) => {
     let width = get_width(v);
     return [v[0]/width, v[1]/width];
 };
 
-//delay a function by m ms
+/**
+ * @brief sleeps the code for a certain amount of time
+ * @param {int} m the amount of miliseconds to wait for 
+ * @returns a promise that resolves after the time has passed
+ */
 async function delay(m) {
     let promise = new Promise(function(resolve, reject) {
         setTimeout(() => {
