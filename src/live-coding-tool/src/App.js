@@ -27,7 +27,7 @@ async function attemptToConnect() {
  */
 function LoadEditor() {
   return (
-    <div className="App">
+    <div class="CodingLander">
         <LiveCodeEditor />
     </div>
   );
@@ -51,7 +51,7 @@ function LoadLander() {
           <div className="enterClass">
             <h2>Join your class now</h2>
             <h4 className="subText">Code is on the presenter's screen</h4>
-            <input type="text" id="inputTxt" className="classId" name="classval" placeholder="abcd-1234">
+            <input type="text" id="inputTxt" className="classId" name="classval" placeholder="ABCD-1234">
             </input>
             <div className="joinButton button"
               onClick={attemptToConnect}>

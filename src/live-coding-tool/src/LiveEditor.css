@@ -1,0 +1,184 @@
+:root {
+    --accent1: rgb(6, 32, 43);
+    --accent2: #196370;
+    --accent3: #7AE2CF;
+    --accent4: rgb(245, 238, 221);
+    --accent5:#06202B;
+    --accent6:#196370;
+    --accent0: #b1a899;
+    --ewidth: 120px;
+    --eheight: 10vh;
+    --text-size: 15px;
+}
+
+.Selector {
+    background-color: var(--accent5);
+    border-color: var(--accent5);
+    box-shadow: none;
+    width: var(--ewidth);
+    height: var(--eheight);
+    font-family: "Monaco", monospace;
+    color:white;
+    font-size: var(--text-size);
+    display: flex;
+    align-items: center;
+}
+.EditorButton {
+    background-color: var(--accent5);
+    border-color: var(--accent5);
+    box-shadow: none;
+    outline: none;
+    border-width: 0px;
+    width: var(--ewidth);
+    height: var(--eheight);
+    font-family: "Monaco", monospace;
+    color:white;
+    font-size: var(--text-size);
+}
+.RunButton {
+    background-color: var(--accent5);
+    border-color: var(--accent5);
+    box-shadow: none;
+    outline: none;
+    border-width: 0px;
+    width: calc(var(--ewidth) / 2);
+    height: var(--eheight);
+    font-family: "Monaco", monospace;
+    color:white;
+    font-size: var(--text-size);
+}
+
+.EditorOptions {
+    display: flex;
+    width: 100vw;
+    height: var(--eheight);
+    background-color: var(--accent5);
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: start;
+    align-items: center;
+    font-size: var(--text-size);
+    opacity: 0.9;
+}
+.FileButton {
+    background-color: var(--accent5);
+    height: var(--eheight);
+    width: var(--eheight);
+}
+.Description {
+    background-color: var(--accent5);
+    height: var(--eheight);
+    width: calc(var(--ewidth) * 3);
+    font-family: "Monaco", monospace;
+    color:white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--text-size);
+}
+.ClassInstance {
+    background-color: var(--accent5);
+    height: var(--eheight);
+    width: calc(var(--ewidth) * 1);
+    font-family: "Monaco", monospace;
+    color: var(--accent3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: calc(var(--text-size) * 1.3);
+    font-weight: 1000;
+}
+.nameImp {
+    border-radius: 20px;
+    background-color: var(--accent6);
+    border: 2px solid var(--accent2);
+    height: calc(var(--eheight) * 0.6);
+    width: calc(var(--ewidth) * 1.5);
+    margin-left: auto;
+    display: center;
+    justify-content: center;
+    align-items: center;
+    font-family: "Monaco", monospace;
+    font-size: 25px;
+    padding: 10px;
+    color: var(--accent4);
+}
+
+.EditorButton:hover, .Selector:hover, .FileButton:hover, .RunButton:hover, .isExecuting {
+    background-color: var(--accent6);
+    border-color: var(--accent6);
+}
+.EditorContainer {
+    width: 100vw;
+    height: 90vh;
+    display: flex;
+    opacity: 0.8;
+}
+#background-container {
+    scale: 1;
+    background-color: black;
+}
+.terminal {
+    width: 50vw;
+    height: 90vh;
+}
+.xterm-screen {
+    background-color: var(--accent4);
+    height: 100% !important;
+    width: 100% !important;
+}
+.EmbTerminal, .Editor{
+    height: 100px;
+    background-color: blue;
+}
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.popup {
+    background-color: var(--accent4);
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    min-width: 300px;
+    display: flex;
+    flex-flow: column;
+    justify-items: center;
+}
+.popup h2 {
+    font-family: "Monaco", monospace;
+    font-size: 25px;
+}
+.popup p {
+    font-family: "Monaco", monospace;
+    font-size: 25px;
+}
+.groupButton {
+    display: flex;
+    flex-flow: row;
+    justify-items: center;
+    align-items: space-between;
+}
+.popup button {
+    font-family: "Monaco", monospace;
+    font-size: 25px;
+    color: var(--accent4);
+    margin: auto;
+    margin-top: 4%;
+    margin-bottom: 5%;
+    border: none;
+    border-radius: 20px;
+    padding: 15px;
+    background-color: var(--accent0);
+}
+.popup button:hover {
+    background-color: var(--accent5);
+}

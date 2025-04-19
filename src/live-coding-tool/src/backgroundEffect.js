@@ -1,12 +1,12 @@
 /*Initialize how many nodes to create*/
-const numNodes = 30;
+const numNodes = 25;
 
 let ac = [];
 let moveAC = [];
 
 /*Accent colours referenced from App.css*/
-let grad1 = [166-40, 201-40, 172-40];
-let grad2 = [242, 241, 235];
+let grad1 = [6, 32, 43];
+let grad2 = [245, 238, 221];
 
 /*Ensures darker colour is always on the bottom*/
 if (grad1[0] + grad1[1] + grad1[2] > grad2[0] + grad2[1] + grad2[2]) {
